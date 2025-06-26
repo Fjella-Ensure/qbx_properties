@@ -107,10 +107,18 @@ local function SetupScaleform()
         if sharedConfig.apartmentOptions[i] then
             ScaleformMovieMethodAddParamTextureNameString(string.format('selection%s', i))
             BeginTextCommandScaleformString('STRING')
-            AddTextComponentSubstringPlayerName(sharedConfig.apartmentOptions[i].label)
+            local apartmentLabel = sharedConfig.apartmentOptions[i].label
+            if sharedConfig.apartmentOptions[i].rentable and sharedConfig.rentalConfig.enabled then
+                apartmentLabel = apartmentLabel .. ' (Rental)'
+            end
+            AddTextComponentSubstringPlayerName(apartmentLabel)
             EndTextCommandScaleformString()
             BeginTextCommandScaleformString('STRING')
-            AddTextComponentSubstringPlayerName(sharedConfig.apartmentOptions[i].description)
+            local description = sharedConfig.apartmentOptions[i].description
+            if sharedConfig.apartmentOptions[i].rentable and sharedConfig.rentalConfig.enabled then
+                description = description .. string.format('\nRent: $%s/week', sharedConfig.apartmentOptions[i].rentPrice)
+            end
+            AddTextComponentSubstringPlayerName(description)
         else
             ScaleformMovieMethodAddParamTextureNameString('empty')
             BeginTextCommandScaleformString('STRING')
@@ -183,15 +191,42 @@ function ManagePlayer()
 end
 
 local function inputConfirm(apartmentIndex)
-    DoScreenFadeOut(500)
-    while not IsScreenFadedOut() do Wait(0) end
-    FreezeEntityPosition(cache.ped, false)
-    SetEntityCoords(cache.ped, sharedConfig.apartmentOptions[apartmentIndex].enter.x, sharedConfig.apartmentOptions[apartmentIndex].enter.y, sharedConfig.apartmentOptions[apartmentIndex].enter.z - 2.0, false, false, false, false)
-    Wait(0)
-    TriggerServerEvent('qbx_properties:server:apartmentSelect', apartmentIndex)
-    Wait(1000) -- Wait for player to spawn correctly so clothing menu can load in nice
-    TriggerServerEvent('QBCore:Server:OnPlayerLoaded')
-    TriggerEvent('QBCore:Client:OnPlayerLoaded')
+    local apartment = sharedConfig.apartmentOptions[apartmentIndex]
+    local isRental = apartment.rentable and sharedConfig.rentalConfig.enabled
+    
+    if isRental then
+        -- Show rental confirmation dialog
+        local alert = lib.alertDialog({
+            header = locale('alert.rental_confirmation'),
+            content = string.format(locale('alert.rental_confirmation_text'), 
+                apartment.label, apartment.rentPrice),
+            centered = true,
+            cancel = true
+        })
+        
+        if alert == 'confirm' then
+            DoScreenFadeOut(500)
+            while not IsScreenFadedOut() do Wait(0) end
+            FreezeEntityPosition(cache.ped, false)
+            SetEntityCoords(cache.ped, apartment.enter.x, apartment.enter.y, apartment.enter.z - 2.0, false, false, false, false)
+            Wait(0)
+            TriggerServerEvent('qbx_properties:server:rentApartmentForNewPlayer', apartmentIndex)
+            Wait(1000) -- Wait for player to spawn correctly so clothing menu can load in nice
+            TriggerServerEvent('QBCore:Server:OnPlayerLoaded')
+            TriggerEvent('QBCore:Client:OnPlayerLoaded')
+        end
+    else
+        -- Original free apartment selection
+        DoScreenFadeOut(500)
+        while not IsScreenFadedOut() do Wait(0) end
+        FreezeEntityPosition(cache.ped, false)
+        SetEntityCoords(cache.ped, apartment.enter.x, apartment.enter.y, apartment.enter.z - 2.0, false, false, false, false)
+        Wait(0)
+        TriggerServerEvent('qbx_properties:server:apartmentSelect', apartmentIndex)
+        Wait(1000) -- Wait for player to spawn correctly so clothing menu can load in nice
+        TriggerServerEvent('QBCore:Server:OnPlayerLoaded')
+        TriggerEvent('QBCore:Client:OnPlayerLoaded')
+    end
 end
 
 local function InputHandler()

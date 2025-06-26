@@ -4,7 +4,12 @@
         "someone_at_door": "Someone is at your door!",
         "keyholder": " has been added as a keyholder.",
         "added_as_keyholder": "You have been added as a keyholder.",
-        "removed_as_keyholder": " has been removed as a keyholder."
+        "removed_as_keyholder": " has been removed as a keyholder.",
+        "rental_already_exists": "You already have a rental property.",
+        "insufficient_funds_rental": "You need $%s in your bank account to rent this apartment.",
+        "rental_payment_failed": "Failed to process rent payment.",
+        "rental_success": "Successfully rented %s %s for $%s/week",
+        "rent_payment_due": "Rent payment of $%s due for %s"
     },
     "alert": {
         "give_keys": "Give keys to this person?",
@@ -18,7 +23,9 @@
         "price_description": "The purchasing price or the price deducted for rent",
         "rent_interval": "Rent interval",
         "rent_interval_description": "The interval in which the rent will be deducted in hours (makes the property rentable instead of purchasable)",
-        "add_garage": "Add Garage"
+        "add_garage": "Add Garage",
+        "rental_confirmation": "Rental Confirmation",
+        "rental_confirmation_text": "Are you sure you want to rent %s for $%s/week? This will be automatically deducted from your bank account."
     },
     "menu": {
         "add_keyholder": "Add Keyholder",
@@ -35,7 +42,8 @@
         "show_owned_properties": "Only show properties you own",
         "interior_preview": "Interior Preview",
         "start_decorating": "Start Decorating",
-        "decorating_categories": "Categories"
+        "decorating_categories": "Categories",
+        "rent": "Rent"
     },
     "instructButtons": {
         "up": "Up",
@@ -67,6 +75,7 @@
         "buy_property": "Player %s bought property %s.",
         "stop_renting": "Player %s stopped renting property %s.",
         "add_decoration": "Player %s added decoration %s to property %s.",
-        "remove_decoration": "Player %s removed decoration %s from property %s."
+        "remove_decoration": "Player %s removed decoration %s from property %s.",
+        "new_player_rental": "Player %s rented apartment %s %s for $%s/week"
     }
 }
